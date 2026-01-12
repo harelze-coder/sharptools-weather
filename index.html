@@ -48,48 +48,35 @@
   </div>
 
   <script>
-    const API_KEY = "442c698967554300aae3c64a2b8c43a3";
-    const UNITS = "imperial"; // metric = Celsius
-    const REFRESH_MINUTES = 10;
+  const API_KEY = "442c698967554300aae3c64a2b8c43a3";
+  const UNITS = "metric"; // metric = Celsius
 
-    function updateWeather(lat, lon) {
-      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${UNITS}&appid=${API_KEY}`)
-        .then(r => r.json())
-        .then(data => {
-          document.getElementById("temp").textContent =
-            Math.round(data.main.temp) + "°";
+  // FIXED LOCATION
+  const LAT = 40.7128;   // New York example
+  const LON = -74.0060;
 
-          document.getElementById("desc").textContent =
-            data.weather[0].description;
+  const REFRESH_MINUTES = 10;
 
-          document.getElementById("location").textContent =
-            data.name;
-        })
-        .catch(() => {
-          document.getElementById("desc").textContent = "Weather unavailable";
-        });
-    }
+  function updateWeather() {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=${UNITS}&appid=${API_KEY}`)
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById("temp").textContent =
+          Math.round(data.main.temp) + "°";
 
-    function init() {
-      if (!navigator.geolocation) {
-        document.getElementById("desc").textContent = "Location not supported";
-        return;
-      }
+        document.getElementById("desc").textContent =
+          data.weather[0].description;
 
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const { latitude, longitude } = pos.coords;
-          updateWeather(latitude, longitude);
-          setInterval(() => updateWeather(latitude, longitude),
-            REFRESH_MINUTES * 60 * 1000);
-        },
-        () => {
-          document.getElementById("desc").textContent = "Location denied";
-        }
-      );
-    }
+        document.getElementById("location").textContent =
+          data.name;
+      })
+      .catch(() => {
+        document.getElementById("desc").textContent = "Weather unavailable";
+      });
+  }
 
-    init();
-  </script>
+  updateWeather();
+  setInterval(updateWeather, REFRESH_MINUTES * 60 * 1000);
+</script>
 </body>
 </html>
